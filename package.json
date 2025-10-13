@@ -1,0 +1,23 @@
+{
+  "name": "winetasting-app",
+  "version": "1.0.0",
+  "description": "Wine Tasting App - Full Stack Application",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "cd backend && npm start",
+    "dev": "cd backend && npm run dev",
+    "install-backend": "cd backend && npm install",
+    "build": "cd backend && npm install"
+  },
+  "keywords": [
+    "wine",
+    "tasting",
+    "nodejs",
+    "express"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
