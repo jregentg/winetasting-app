@@ -9,7 +9,7 @@ class WineTastingAPI {
             this.baseURL = 'http://192.168.1.16:3000/api';
         } else if (hostname === 'winetasting.uno' || hostname.includes('onrender.com')) {
             // Production Render.com
-            this.baseURL = 'https://winetasting-backend.onrender.com/api';
+            this.baseURL = 'https://winetasting-app.onrender.com/api';
         } else {
             // Fallback vers l'IP réseau local
             this.baseURL = `http://${hostname}:3000/api`;
