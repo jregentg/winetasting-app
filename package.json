@@ -7,7 +7,7 @@
     "start": "cd backend && npm start",
     "dev": "cd backend && npm run dev",
     "install-backend": "cd backend && npm install",
-    "build": "cd backend && npm install"
+    "build": "cd backend && npm install && npm run migrate"
   },
   "keywords": [
     "wine",

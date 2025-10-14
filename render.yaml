@@ -2,8 +2,9 @@ services:
   - type: web
     name: winetasting-app
     env: node
-    buildCommand: "cd backend && npm install"
-    startCommand: "cd backend && npm start"
+    buildCommand: "npm run build"
+    startCommand: "npm start"
+    rootDir: .
     envVars:
       - key: NODE_ENV
         value: production
