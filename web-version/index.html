@@ -2979,19 +2979,38 @@
             showScreen('login');
         }
         
-        function handleRegister() {
+        async function handleRegister() {
             console.log('🔧 handleRegister appelée');
             const username = document.getElementById('register-username')?.value;
             const email = document.getElementById('register-email')?.value;
             const password = document.getElementById('register-password')?.value;
+            const firstName = document.getElementById('register-firstname')?.value || '';
+            const lastName = document.getElementById('register-lastname')?.value || '';
             
             if (!username || !email || !password) {
-                alert('Veuillez remplir tous les champs');
+                showError('Veuillez remplir tous les champs obligatoires');
                 return;
             }
             
             console.log('🔧 Tentative d\'inscription:', email);
-            alert('Fonction handleRegister fonctionne ! Email: ' + email);
+            
+            try {
+                const response = await api.register({
+                    username,
+                    email, 
+                    password,
+                    firstName,
+                    lastName
+                });
+                
+                console.log('✅ Inscription réussie:', response);
+                showSuccess('Compte créé avec succès ! Vous pouvez maintenant vous connecter.');
+                showLogin(); // Retour à l'écran de connexion
+                
+            } catch (error) {
+                console.error('❌ Erreur d\'inscription:', error);
+                showError('Erreur lors de la création du compte: ' + error.message);
+            }
         }
         
         function handleForgotPassword() {
