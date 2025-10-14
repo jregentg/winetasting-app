@@ -4,6 +4,9 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
+// Initialiser la base de données au démarrage
+require('./config/database');
+
 const authRoutes = require('./routes/auth');
 const tastingRoutes = require('./routes/tastings');
 
