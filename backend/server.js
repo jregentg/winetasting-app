@@ -88,9 +88,16 @@ if (process.env.NODE_ENV === 'development') {
 
 // Routes
 const sessionRoutes = require('./routes/sessions');
+
+// Debug des routes
+console.log('🔧 Chargement des routes...');
+console.log('📋 authRoutes:', typeof authRoutes, authRoutes.stack ? authRoutes.stack.length + ' routes' : 'pas de stack');
+
 app.use('/api/auth', authRoutes);
 app.use('/api/tastings', tastingRoutes);
 app.use('/api/sessions', sessionRoutes);
+
+console.log('✅ Routes chargées!');
 
 // Route de santé
 app.get('/api/health', (req, res) => {
