@@ -28,9 +28,18 @@ app.use(helmet({
 
 // Configuration CORS
 const corsOptions = {
-    origin: true,
+    origin: [
+        'http://localhost:3000',
+        'http://localhost:8080', 
+        'http://192.168.1.16:3000',
+        'https://winetasting.uno',
+        'https://winetasting-frontend.onrender.com',
+        'https://winetasting-backend.onrender.com'
+    ],
     credentials: true,
-    optionsSuccessStatus: 200
+    optionsSuccessStatus: 200,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 };
 app.use(cors(corsOptions));
 
