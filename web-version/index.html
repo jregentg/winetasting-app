@@ -5980,8 +5980,79 @@
             }
         }
 
+        // Console mobile pour debug
+        function createMobileConsole() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                const consoleDiv = document.createElement('div');
+                consoleDiv.id = 'mobile-console';
+                consoleDiv.style.cssText = `
+                    position: fixed;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    max-height: 200px;
+                    background: rgba(0,0,0,0.9);
+                    color: #00ff00;
+                    font-family: monospace;
+                    font-size: 10px;
+                    padding: 10px;
+                    overflow-y: auto;
+                    z-index: 9999;
+                    display: none;
+                `;
+                document.body.appendChild(consoleDiv);
+                
+                // Bouton pour toggle la console
+                const toggleBtn = document.createElement('button');
+                toggleBtn.innerHTML = '🐛';
+                toggleBtn.style.cssText = `
+                    position: fixed;
+                    top: 10px;
+                    right: 10px;
+                    z-index: 10000;
+                    background: #ff4444;
+                    color: white;
+                    border: none;
+                    border-radius: 50%;
+                    width: 40px;
+                    height: 40px;
+                    font-size: 16px;
+                `;
+                document.body.appendChild(toggleBtn);
+                
+                let consoleVisible = false;
+                toggleBtn.onclick = () => {
+                    consoleVisible = !consoleVisible;
+                    consoleDiv.style.display = consoleVisible ? 'block' : 'none';
+                };
+                
+                // Intercepter console.log pour mobile
+                const originalLog = console.log;
+                console.log = function(...args) {
+                    originalLog.apply(console, args);
+                    const logDiv = document.createElement('div');
+                    logDiv.textContent = args.join(' ');
+                    consoleDiv.appendChild(logDiv);
+                    consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                };
+                
+                const originalError = console.error;
+                console.error = function(...args) {
+                    originalError.apply(console, args);
+                    const errorDiv = document.createElement('div');
+                    errorDiv.textContent = '❌ ' + args.join(' ');
+                    errorDiv.style.color = '#ff4444';
+                    consoleDiv.appendChild(errorDiv);
+                    consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                };
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', checkAuthentication);
         document.addEventListener('DOMContentLoaded', enhanceMobileInteractions);
+        document.addEventListener('DOMContentLoaded', createMobileConsole);
     </script>
 </body>
 </html>
