@@ -2918,10 +2918,18 @@
         
         async function handleLogin() {
             console.log('🔧 handleLogin appelée');
+            console.log('📱 User Agent:', navigator.userAgent);
+            console.log('🌐 Current URL:', window.location.href);
+            console.log('🔗 API Base URL:', api ? api.baseURL : 'API non définie');
+            
             const email = document.getElementById('login-email')?.value;
             const password = document.getElementById('login-password')?.value;
             
+            console.log('📧 Email:', email);
+            console.log('🔐 Password length:', password ? password.length : 0);
+            
             if (!email || !password) {
+                console.log('❌ Champs manquants');
                 showError('Veuillez remplir tous les champs', 'login-error');
                 return;
             }
@@ -2940,6 +2948,7 @@
                 
                 // Utiliser l'API si elle existe, sinon simulation
                 if (typeof api !== 'undefined' && api.login) {
+                    console.log('🚀 Appel api.login avec:', { email, password: '***' });
                     const response = await api.login(email, password);
                     console.log('✅ Connexion réussie:', response);
                     
@@ -2956,8 +2965,17 @@
                 setLoading(false);
             } catch (error) {
                 console.error('❌ Erreur de connexion:', error);
+                console.error('❌ Stack trace:', error.stack);
                 setLoading(false);
-                showError(error.message || 'Erreur de connexion', 'login-error');
+                
+                let errorMessage = error.message || 'Erreur de connexion';
+                if (errorMessage.includes('rate limit') || errorMessage.includes('trop de tentatives')) {
+                    errorMessage = 'Trop de tentatives de connexion. Veuillez attendre quelques minutes et réessayer.';
+                } else if (errorMessage.includes('Failed to fetch') || errorMessage.includes('Network Error')) {
+                    errorMessage = 'Problème de connexion réseau. Vérifiez votre connexion internet.';
+                }
+                
+                showError(errorMessage, 'login-error');
             }
         }
         
@@ -5937,14 +5955,18 @@
                     }
                 }, { passive: true });
                 
-                // Force la réactivité des clics
+                // Force la réactivité des clics (version corrigée)
                 document.addEventListener('touchend', function(e) {
-                    e.preventDefault();
                     const target = e.target;
-                    if (target.onclick) {
-                        target.click();
+                    if (target.matches('button, .btn-primary, .btn-secondary, .btn-danger, [onclick]')) {
+                        // Ne pas empêcher le comportement par défaut pour les vrais clics
+                        // e.preventDefault(); 
+                        
+                        // Laisser le navigateur gérer le clic naturellement
+                        // Le onclick sera déclenché automatiquement
+                        console.log('📱 Touch sur:', target.tagName, target.className);
                     }
-                }, false);
+                }, { passive: true });
                 
                 // Éviter le double-tap zoom
                 let lastTouchEnd = 0;

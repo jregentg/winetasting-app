@@ -34,7 +34,7 @@ const corsOptions = {
         'http://192.168.1.16:3000',
         'https://winetasting.uno',
         'https://winetasting-frontend.onrender.com',
-        'https://winetasting-backend.onrender.com'
+        'https://winetasting-app.onrender.com'
     ],
     credentials: true,
     optionsSuccessStatus: 200,
@@ -57,7 +57,7 @@ const generalLimiter = rateLimit({
 
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: process.env.NODE_ENV === 'development' ? 50 : 5, // 50 en dev, 5 en prod
+    max: process.env.NODE_ENV === 'development' ? 50 : 20, // 50 en dev, 20 en prod (augmenté)
     message: {
         success: false,
         message: 'Trop de tentatives de connexion, veuillez réessayer plus tard'
