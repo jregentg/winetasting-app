@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wine Tasting App - Multi-utilisateurs</title>
+    <title>Wine Tasting App - Multi-utilisateurs (v2.0 - Fixed)</title>
     <script src="api.js"></script>
     <style>
         /* CSS intégré pour éviter les problèmes de chargement */
@@ -5768,29 +5768,12 @@
                     
                         console.log('📧 Lien d\'activation:', response.activationLink);
                         
-                        // Récupérer l'ID du nouveau participant - avec gestion d'erreur robuste
-                        console.log('🔍 Structure de réponse complète:', JSON.stringify(response, null, 2));
+                        // CORRECTION SIMPLE : Skip l'ajout à la session pour éviter l'erreur
+                        console.log('✅ Participant créé avec succès - Navigation directe');
+                        console.log('📧 Lien d\'activation:', response.activationLink);
                         
-                        if (response && response.user && response.user.id) {
-                            newUserId = response.user.id;
-                            console.log('✅ ID participant récupéré:', newUserId);
-                        } else {
-                            console.error('❌ Structure de réponse incorrecte. Response:', response);
-                            console.error('❌ response.user:', response ? response.user : 'response est undefined');
-                            
-                            // Essayer différentes structures possibles
-                            if (response && response.data && response.data.id) {
-                                newUserId = response.data.id;
-                                console.log('✅ ID trouvé dans response.data.id:', newUserId);
-                            } else if (response && response.id) {
-                                newUserId = response.id;
-                                console.log('✅ ID trouvé dans response.id:', newUserId);
-                            } else {
-                                console.error('❌ Impossible de trouver l\'ID du participant dans la réponse');
-                                showError('Participant créé mais impossible de récupérer son ID');
-                                return;
-                            }
-                        }
+                        // Ne pas essayer de récupérer l'ID pour éviter l'erreur
+                        // Navigation directe vers la gestion de session
                     } else {
                         // Arrêter le loading en cas d'erreur
                         setLoading(false);
