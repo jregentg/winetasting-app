@@ -46,36 +46,6 @@ class WineTastingAPI {
     }
 
     // Authentification
-    async register(userData) {
-        try {
-            console.log('🔧 API register - URL:', `${this.baseURL}/auth/register`);
-            console.log('🔧 API register - Headers:', this.getHeaders());
-            console.log('🔧 API register - Body:', JSON.stringify(userData));
-            
-            const response = await fetch(`${this.baseURL}/auth/register`, {
-                method: 'POST',
-                headers: this.getHeaders(),
-                body: JSON.stringify(userData)
-            });
-            
-            console.log('🔧 API register - Response status:', response.status);
-            console.log('🔧 API register - Response headers:', [...response.headers.entries()]);
-            
-            const data = await this.handleResponse(response);
-            
-            if (data.success && data.data.token) {
-                this.token = data.data.token;
-                localStorage.setItem('wine_tasting_token', this.token);
-                localStorage.setItem('wine_tasting_user', JSON.stringify(data.data.user));
-            }
-            
-            return data;
-        } catch (error) {
-            console.error('❌ Erreur API register:', error);
-            throw error;
-        }
-    }
-
     async login(email, password) {
         try {
             const response = await fetch(`${this.baseURL}/auth/login`, {
