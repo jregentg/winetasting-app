@@ -5396,6 +5396,12 @@
             // Afficher l'onglet sélectionné
             document.getElementById(`session-${tabName}-tab`).classList.add('active');
             document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            // Charger les données spécifiques à l'onglet
+            if (tabName === 'participants') {
+                console.log('🔧 Chargement automatique des participants pour l\'onglet');
+                loadAndDisplayParticipants();
+            }
         }
         
         // Charger les bouteilles de la session
@@ -5917,6 +5923,131 @@
                 console.error('❌ Erreur création participant:', error);
                 showError('Erreur lors de la création: ' + error.message);
                 setLoading(false);
+            }
+        }
+        
+        // === FONCTIONS D'AFFICHAGE DES PARTICIPANTS ===
+        
+        async function loadAndDisplayParticipants() {
+            console.log('🔧 Chargement de la liste des participants...');
+            
+            try {
+                if (!api.isArbitre()) {
+                    console.log('❌ Seuls les arbitres peuvent voir les participants');
+                    return;
+                }
+                
+                // Récupérer tous les utilisateurs
+                const response = await api.getAllUsers();
+                
+                if (response.success && response.data) {
+                    console.log('✅ Participants récupérés:', response.data);
+                    displayParticipantsList(response.data);
+                } else {
+                    console.log('⚠️ Aucun participant trouvé ou erreur:', response);
+                    displayEmptyParticipantsList();
+                }
+                
+            } catch (error) {
+                console.error('❌ Erreur chargement participants:', error);
+                displayEmptyParticipantsList('Erreur lors du chargement des participants');
+            }
+        }
+        
+        function displayParticipantsList(participants) {
+            console.log('🎯 Affichage de', participants.length, 'participants');
+            
+            // Trouver le conteneur des participants 
+            const participantsContainer = document.getElementById('session-participants-list');
+            if (!participantsContainer) {
+                console.error('❌ Conteneur participants introuvable');
+                return;
+            }
+            
+            // Vider le conteneur
+            participantsContainer.innerHTML = '';
+            
+            if (participants.length === 0) {
+                displayEmptyParticipantsList();
+                return;
+            }
+            
+            // Afficher chaque participant
+            participants.forEach(participant => {
+                const participantElement = createParticipantElement(participant);
+                participantsContainer.appendChild(participantElement);
+            });
+        }
+        
+        function createParticipantElement(participant) {
+            const div = document.createElement('div');
+            div.className = 'participant-item';
+            
+            const roleBadge = participant.role === 'arbitre' ? 
+                '<span style="background: #8B0000; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px;">ARBITRE</span>' :
+                '<span style="background: #4CAF50; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px;">TESTEUR</span>';
+            
+            const statusBadge = participant.needs_password_setup ? 
+                '<span style="background: #FF9800; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px;">EN ATTENTE</span>' :
+                '<span style="background: #4CAF50; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px;">ACTIF</span>';
+            
+            div.innerHTML = `
+                <div class="participant-info">
+                    <div class="participant-name">
+                        <strong>${participant.first_name || participant.username}</strong>
+                        ${roleBadge}
+                        ${statusBadge}
+                    </div>
+                    <div class="participant-email">${participant.email}</div>
+                    <div class="participant-created">
+                        Créé le: ${new Date(participant.created_at).toLocaleDateString('fr-FR')}
+                    </div>
+                </div>
+                <div class="participant-actions">
+                    ${participant.role !== 'arbitre' ? `
+                        <button class="btn-danger btn-small" onclick="deleteParticipant('${participant.id}', '${participant.email}')">
+                            <span class="icon">🗑️</span> Supprimer
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+            
+            return div;
+        }
+        
+        function displayEmptyParticipantsList(message = 'Aucun participant créé') {
+            const participantsContainer = document.getElementById('session-participants-list');
+            if (participantsContainer) {
+                participantsContainer.innerHTML = `
+                    <div class="empty-message">
+                        <span class="icon">👥</span>
+                        ${message}
+                    </div>
+                `;
+            }
+        }
+        
+        async function deleteParticipant(userId, email) {
+            if (!confirm(`Êtes-vous sûr de vouloir supprimer le participant ${email} ?`)) {
+                return;
+            }
+            
+            try {
+                console.log('🗑️ Suppression participant:', userId, email);
+                const response = await api.deleteUser(userId);
+                
+                if (response.success) {
+                    console.log('✅ Participant supprimé');
+                    showSuccess('Participant supprimé avec succès');
+                    // Recharger la liste
+                    await loadAndDisplayParticipants();
+                } else {
+                    throw new Error(response.message || 'Erreur lors de la suppression');
+                }
+                
+            } catch (error) {
+                console.error('❌ Erreur suppression participant:', error);
+                showError('Erreur lors de la suppression: ' + error.message);
             }
         }
         

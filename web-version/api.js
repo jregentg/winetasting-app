@@ -389,6 +389,19 @@ class WineTastingAPI {
         }
     }
 
+    // Récupérer tous les utilisateurs (arbitre uniquement)
+    async getAllUsers() {
+        try {
+            const response = await fetch(`${this.baseURL}/auth/admin/users`, {
+                headers: this.getHeaders()
+            });
+            return await this.handleResponse(response);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des utilisateurs:', error);
+            throw error;
+        }
+    }
+
     // Supprimer un utilisateur (arbitre uniquement)
     async deleteUser(userId) {
         try {
