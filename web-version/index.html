@@ -5749,6 +5749,8 @@
                     const response = await api.createUser({ firstName, email });
                     console.log('📡 Réponse API:', response);
                     
+                    console.log('🔍 Réponse complète de createUser:', JSON.stringify(response, null, 2));
+                    
                     if (response.success) {
                     // Arrêter le loading IMMÉDIATEMENT
                     setLoading(false);
@@ -5766,8 +5768,29 @@
                     
                         console.log('📧 Lien d\'activation:', response.activationLink);
                         
-                        // Récupérer l'ID du nouveau participant
-                        newUserId = response.user.id;
+                        // Récupérer l'ID du nouveau participant - avec gestion d'erreur robuste
+                        console.log('🔍 Structure de réponse complète:', JSON.stringify(response, null, 2));
+                        
+                        if (response && response.user && response.user.id) {
+                            newUserId = response.user.id;
+                            console.log('✅ ID participant récupéré:', newUserId);
+                        } else {
+                            console.error('❌ Structure de réponse incorrecte. Response:', response);
+                            console.error('❌ response.user:', response ? response.user : 'response est undefined');
+                            
+                            // Essayer différentes structures possibles
+                            if (response && response.data && response.data.id) {
+                                newUserId = response.data.id;
+                                console.log('✅ ID trouvé dans response.data.id:', newUserId);
+                            } else if (response && response.id) {
+                                newUserId = response.id;
+                                console.log('✅ ID trouvé dans response.id:', newUserId);
+                            } else {
+                                console.error('❌ Impossible de trouver l\'ID du participant dans la réponse');
+                                showError('Participant créé mais impossible de récupérer son ID');
+                                return;
+                            }
+                        }
                     } else {
                         // Arrêter le loading en cas d'erreur
                         setLoading(false);
