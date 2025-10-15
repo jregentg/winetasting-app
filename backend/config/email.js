@@ -125,5 +125,6 @@ const sendParticipantInvitation = async (participantEmail, participantName, setu
 };
 
 module.exports = {
+    createTransporter,
     sendParticipantInvitation
 };
